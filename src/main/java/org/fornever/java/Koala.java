@@ -1,111 +1,128 @@
 package org.fornever.java;
 
 import org.fornever.java.entity.KoalaBaseEntity;
-import org.fornever.java.processor.IDeleteEntityProcessor;
-import org.fornever.java.processor.IReadEntityProcessor;
-import org.fornever.java.processor.ISaveEntityProcessor;
-import org.fornever.java.processor.IUpdateEntityProcessor;
+import org.fornever.java.errors.KoalaInstanceNotConfigurationCorrectException;
+import org.fornever.java.errors.SaveFailedException;
+import org.fornever.java.processor.AKoalaProcessors;
+import org.fornever.java.schedule.impl.ScheduleRunner;
+import org.fornever.java.schedule.IScheduleRunner;
 
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Koala Entity Processor
  *
  * @param <T> Entity Type
  * @param <S> Search Prarameter Type
- * @param <K> Primary Key Type
  * @author Theo Sun
  */
-public class Koala<T extends KoalaBaseEntity, S, K> {
+public class Koala<T extends KoalaBaseEntity, S> extends AKoalaProcessors<T, S> {
 
-    public static <T1 extends KoalaBaseEntity, S1, K1> Koala<T1, S1, K1> New() {
-        return new Koala<T1, S1, K1>();
-    }
+    private Logger logger = Logger.getLogger(getClass().getName());
 
-    private Integer retryCount = 0;
-    private Integer parallelThread = 5;
+    /**
+     * schedule
+     */
+    private ScheduledExecutorService scheduler;
+    /**
+     * The maximum count of retry after persist on remote system
+     */
+    private Integer maxRetryCount = 0;
+    /**
+     * Date of the recent record created
+     */
+
     private Date recentCreateRecordDate;
-    private Integer remotePPS = 5;
+    /**
+     * Transactions Per Second on remote system
+     */
+    private Integer remoteTPS = 10;
 
-    private IReadEntityProcessor<T, S> readProcessor;
-    private ISaveEntityProcessor<T> saveProcessor;
-    private IUpdateEntityProcessor<T, K> updateProcessor;
-    private IDeleteEntityProcessor<K> deleteProcessor;
-
-    private IReadEntityProcessor<T, S> remoteReadProcessor;
-    private ISaveEntityProcessor<T> remoteSaveProcessor;
-    private IUpdateEntityProcessor<T, K> remoteUpdateProcessor;
-    private IDeleteEntityProcessor<K> remoteDeleteProcessor;
+    private IScheduleRunner<T,S> scheduleRunner = ScheduleRunner.DefaultRunner;
 
     public Koala() {
-
+        this.scheduler = Executors.newScheduledThreadPool(this.remoteTPS);
     }
 
-    public T createEntity(T entity) {
-        return null;
+    public static <T1 extends KoalaBaseEntity, S1> Koala<T1, S1> New() {
+        return new Koala<T1, S1>();
     }
 
-    public Koala<T, S, K> setRetryCount(Integer retryCount) {
-        this.retryCount = retryCount;
+    public Koala setMaxRetryCount(Integer maxRetryCount) {
+        this.maxRetryCount = maxRetryCount;
         return this;
     }
 
-    public Koala<T, S, K> setParallelThread(Integer parallelThread) {
-        this.parallelThread = parallelThread;
+    public Koala setRecentCreateRecordDate(Date recentCreateRecordDate) {
+        this.recentCreateRecordDate = recentCreateRecordDate;
         return this;
     }
 
-    public Koala<T, S, K> setRemotePPS(Integer remotePPS) {
-        this.remotePPS = remotePPS;
+    public Koala setRemoteTPS(Integer remoteTPS) {
+        this.remoteTPS = remoteTPS;
+        this.scheduler = Executors.newScheduledThreadPool(this.remoteTPS);
         return this;
     }
 
-    public Koala<T, S, K> setReadProcessor(IReadEntityProcessor<T, S> readProcessor) {
-        this.readProcessor = readProcessor;
-        return this;
+    public T save(T entity) throws SaveFailedException {
+        return this.saveProcessor.save(entity);
     }
 
-    public Koala<T, S, K> setSaveProcessor(ISaveEntityProcessor<T> saveProcessor) {
-        this.saveProcessor = saveProcessor;
-        return this;
+    /**
+     * start work
+     */
+    public void start() throws KoalaInstanceNotConfigurationCorrectException {
+        checkKoalaInstanceWork();
+        if (this.scheduler != null) {
+            this.scheduler.schedule(() -> {
+                ScheduleRunner.DefaultRunner.run(this, this.maxRetryCount);
+            }, 1, TimeUnit.SECONDS);
+        }
     }
 
-    public Koala<T, S, K> setUpdateProcessor(IUpdateEntityProcessor<T, K> updateProcessor) {
-        this.updateProcessor = updateProcessor;
-        return this;
+    /**
+     * check this koala instance can do basis data transfer
+     *
+     * @throws KoalaInstanceNotConfigurationCorrectException
+     */
+    private void checkKoalaInstanceWork() throws KoalaInstanceNotConfigurationCorrectException {
+        if (this.readProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set read processor");
+        }
+        if (this.retriveProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set retrive processor");
+        }
+        if (this.persistSelector == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set persist selector");
+        }
+        if (this.saveProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set save processor");
+        }
+        if (this.updateProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set update processor");
+        }
+        if (this.remoteReadProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set remove read processor");
+        }
+        if (this.remoteRetriveProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set remove retrive processor");
+        }
+        if (this.remoteSaveProcessor == null) {
+            throw new KoalaInstanceNotConfigurationCorrectException("You must set remove save processor");
+        }
     }
 
-    public Koala<T, S, K> setDeleteProcessor(IDeleteEntityProcessor<K> deleteProcessor) {
-        this.deleteProcessor = deleteProcessor;
-        return this;
-    }
-
-    public Koala<T, S, K> setRemoteReadProcessor(IReadEntityProcessor<T, S> remoteReadProcessor) {
-        this.remoteReadProcessor = remoteReadProcessor;
-        return this;
-    }
-
-    public Koala<T, S, K> setRemoteSaveProcessor(ISaveEntityProcessor<T> remoteSaveProcessor) {
-        this.remoteSaveProcessor = remoteSaveProcessor;
-        return this;
-    }
-
-    public Koala<T, S, K> setRemoteUpdateProcessor(IUpdateEntityProcessor<T, K> remoteUpdateProcessor) {
-        this.remoteUpdateProcessor = remoteUpdateProcessor;
-        return this;
-    }
-
-    public Koala<T, S, K> setRemoteDeleteProcessor(IDeleteEntityProcessor<K> remoteDeleteProcessor) {
-        this.remoteDeleteProcessor = remoteDeleteProcessor;
-        return this;
-    }
-
-    public void start() {
-
-    }
-
+    /**
+     * stop work
+     */
     public void stop() {
-
+        if (this.scheduler != null) {
+            this.scheduler.shutdown();
+        }
     }
 
 }
