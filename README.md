@@ -1,3 +1,5 @@
-# Koala
+# Koala ![](https://res.cloudinary.com/digf90pwi/image/upload/c_scale,h_28/v1525442687/icons8-koala-filled-100_ootlj9.png)
+
+[![Coverage Status](https://coveralls.io/repos/github/Soontao/Koala/badge.svg?branch=master)](https://coveralls.io/github/Soontao/Koala?branch=master)
 
 Java middleware for transferring requests from modern system to slow system
