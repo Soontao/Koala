@@ -2,7 +2,7 @@ package org.fornever.java.processor;
 
 import org.fornever.java.entity.KoalaBaseEntity;
 
-public interface IPesistSelector<E extends KoalaBaseEntity> {
+public interface IPersistSelector<E extends KoalaBaseEntity> {
 
     /**
      * select one record from persistence

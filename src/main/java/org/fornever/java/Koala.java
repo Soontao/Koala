@@ -3,9 +3,9 @@ package org.fornever.java;
 import org.fornever.java.entity.KoalaBaseEntity;
 import org.fornever.java.errors.KoalaInstanceNotConfigurationCorrectException;
 import org.fornever.java.errors.SaveFailedException;
-import org.fornever.java.processor.AKoalaProcessors;
-import org.fornever.java.schedule.impl.ScheduleRunner;
+import org.fornever.java.processor.KoalaProcessors;
 import org.fornever.java.schedule.IScheduleRunner;
+import org.fornever.java.schedule.impl.ScheduleRunner;
 
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * @param <S> Search Prarameter Type
  * @author Theo Sun
  */
-public class Koala<T extends KoalaBaseEntity, S> extends AKoalaProcessors<T, S> {
+public class Koala<T extends KoalaBaseEntity, S> {
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
@@ -42,14 +42,26 @@ public class Koala<T extends KoalaBaseEntity, S> extends AKoalaProcessors<T, S> 
      */
     private Integer remoteTPS = 10;
 
-    private IScheduleRunner<T,S> scheduleRunner = ScheduleRunner.DefaultRunner;
+    private IScheduleRunner<T, S> scheduleRunner = ScheduleRunner.DefaultRunner;
 
-    public Koala() {
+    private KoalaProcessors<T, S> processors;
+
+    private Koala() {
         this.scheduler = Executors.newScheduledThreadPool(this.remoteTPS);
     }
 
-    public static <T1 extends KoalaBaseEntity, S1> Koala<T1, S1> New() {
-        return new Koala<T1, S1>();
+    public static <T1 extends KoalaBaseEntity, S1> Koala<T1, S1> New(KoalaProcessors<T1, S1> processors) {
+        return new Koala<T1, S1>().setProcessors(processors);
+    }
+
+    public Koala<T, S> setScheduleRunner(IScheduleRunner<T, S> scheduleRunner) {
+        this.scheduleRunner = scheduleRunner;
+        return this;
+    }
+
+    public Koala<T, S> setProcessors(KoalaProcessors<T, S> processors) {
+        this.processors = processors;
+        return this;
     }
 
     public Koala setMaxRetryCount(Integer maxRetryCount) {
@@ -69,50 +81,18 @@ public class Koala<T extends KoalaBaseEntity, S> extends AKoalaProcessors<T, S> 
     }
 
     public T save(T entity) throws SaveFailedException {
-        return this.saveProcessor.save(entity);
+        return this.processors.getSaveProcessor().save(entity);
     }
 
     /**
      * start work
      */
     public void start() throws KoalaInstanceNotConfigurationCorrectException {
-        checkKoalaInstanceWork();
+        this.processors.checkKoalaInstanceWork();
         if (this.scheduler != null) {
             this.scheduler.schedule(() -> {
-                ScheduleRunner.DefaultRunner.run(this, this.maxRetryCount);
+                this.scheduleRunner.run(this.processors, this.maxRetryCount);
             }, 1, TimeUnit.SECONDS);
-        }
-    }
-
-    /**
-     * check this koala instance can do basis data transfer
-     *
-     * @throws KoalaInstanceNotConfigurationCorrectException
-     */
-    private void checkKoalaInstanceWork() throws KoalaInstanceNotConfigurationCorrectException {
-        if (this.readProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set read processor");
-        }
-        if (this.retriveProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set retrive processor");
-        }
-        if (this.persistSelector == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set persist selector");
-        }
-        if (this.saveProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set save processor");
-        }
-        if (this.updateProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set update processor");
-        }
-        if (this.remoteReadProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set remove read processor");
-        }
-        if (this.remoteRetriveProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set remove retrive processor");
-        }
-        if (this.remoteSaveProcessor == null) {
-            throw new KoalaInstanceNotConfigurationCorrectException("You must set remove save processor");
         }
     }
 
