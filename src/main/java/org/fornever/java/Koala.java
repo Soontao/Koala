@@ -1,26 +1,24 @@
 package org.fornever.java;
 
-import org.fornever.java.entity.KoalaBaseEntity;
-import org.fornever.java.errors.KoalaInstanceNotConfigurationCorrectException;
-import org.fornever.java.errors.SaveFailedException;
-import org.fornever.java.processor.KoalaProcessors;
+import org.fornever.java.entities.KoalaConfig;
+import org.fornever.java.entities.KoalaEntity;
+import org.fornever.java.exceptions.KoalaInstanceNotConfigurationCorrectException;
+import org.fornever.java.exceptions.WriteFailedException;
+import org.fornever.java.processors.KoalaProcessors;
 import org.fornever.java.schedule.IScheduleRunner;
 import org.fornever.java.schedule.impl.ScheduleRunner;
 
-import java.util.Date;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Koala Entity Processor
+ * Koala
  *
  * @param <T> Entity Type
  * @param <S> Search Prarameter Type
  * @author Theo Sun
  */
-public class Koala<T extends KoalaBaseEntity, S> {
+public class Koala<T extends KoalaEntity, S> {
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
@@ -28,29 +26,17 @@ public class Koala<T extends KoalaBaseEntity, S> {
      * schedule
      */
     private ScheduledExecutorService scheduler;
-    /**
-     * The maximum count of retry after persist on remote system
-     */
-    private Integer maxRetryCount = 0;
-    /**
-     * Date of the recent record created
-     */
 
-    private Date recentCreateRecordDate;
-    /**
-     * Transactions Per Second on remote system
-     */
-    private Integer remoteTPS = 10;
+    private KoalaConfig config = new KoalaConfig();
 
     private IScheduleRunner<T, S> scheduleRunner = ScheduleRunner.DefaultRunner;
 
     private KoalaProcessors<T, S> processors;
 
     private Koala() {
-        this.scheduler = Executors.newScheduledThreadPool(this.remoteTPS);
     }
 
-    public static <T1 extends KoalaBaseEntity, S1> Koala<T1, S1> New(KoalaProcessors<T1, S1> processors) {
+    public static <T1 extends KoalaEntity, S1> Koala<T1, S1> New(KoalaProcessors<T1, S1> processors) {
         return new Koala<T1, S1>().setProcessors(processors);
     }
 
@@ -64,40 +50,26 @@ public class Koala<T extends KoalaBaseEntity, S> {
         return this;
     }
 
-    public Koala setMaxRetryCount(Integer maxRetryCount) {
-        this.maxRetryCount = maxRetryCount;
-        return this;
+    public void notifyUpdate(Long id) {
+
     }
 
-    public Koala setRecentCreateRecordDate(Date recentCreateRecordDate) {
-        this.recentCreateRecordDate = recentCreateRecordDate;
-        return this;
-    }
-
-    public Koala setRemoteTPS(Integer remoteTPS) {
-        this.remoteTPS = remoteTPS;
-        this.scheduler = Executors.newScheduledThreadPool(this.remoteTPS);
-        return this;
-    }
-
-    public T save(T entity) throws SaveFailedException {
+    public T save(T entity) throws WriteFailedException {
         return this.processors.getSaveProcessor().save(entity);
     }
 
     /**
-     * start work
+     * start sync
      */
     public void start() throws KoalaInstanceNotConfigurationCorrectException {
         this.processors.checkKoalaInstanceWork();
         if (this.scheduler != null) {
-            this.scheduler.schedule(() -> {
-                this.scheduleRunner.run(this.processors, this.maxRetryCount);
-            }, 1, TimeUnit.SECONDS);
+
         }
     }
 
     /**
-     * stop work
+     * stop sync
      */
     public void stop() {
         if (this.scheduler != null) {

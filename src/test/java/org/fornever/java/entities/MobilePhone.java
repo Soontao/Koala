@@ -1,10 +1,10 @@
-package org.fornever.java.entity;
+package org.fornever.java.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
-public class MobilePhone extends KoalaBaseEntity {
+public class MobilePhone extends KoalaEntity {
 
 
     @Column

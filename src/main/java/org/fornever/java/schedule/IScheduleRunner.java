@@ -1,9 +1,9 @@
 package org.fornever.java.schedule;
 
-import org.fornever.java.entity.KoalaBaseEntity;
-import org.fornever.java.processor.KoalaProcessors;
+import org.fornever.java.entities.KoalaEntity;
+import org.fornever.java.processors.KoalaProcessors;
 
-public interface IScheduleRunner<T extends KoalaBaseEntity, S> {
+public interface IScheduleRunner<T extends KoalaEntity, S> {
 
     void run(KoalaProcessors<T, S> processor, Integer maxRetryCount);
 

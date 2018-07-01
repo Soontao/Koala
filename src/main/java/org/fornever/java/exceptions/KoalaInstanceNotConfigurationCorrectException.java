@@ -1,8 +1,9 @@
-package org.fornever.java.errors;
+package org.fornever.java.exceptions;
 
-public class KoalaInstanceNotConfigurationCorrectException extends Exception {
+public class KoalaInstanceNotConfigurationCorrectException extends KoalaBaseException {
 
     public KoalaInstanceNotConfigurationCorrectException() {
+
     }
 
     public KoalaInstanceNotConfigurationCorrectException(String msg) {

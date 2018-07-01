@@ -1,10 +1,10 @@
-package org.fornever.java.entity;
+package org.fornever.java.entities;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
-public class KoalaBaseEntity {
+public class KoalaEntity {
 
     /**
      * The primary key
@@ -36,7 +36,7 @@ public class KoalaBaseEntity {
     private Integer koalaPersistRetryCount;
 
     /**
-     * wether this entity persisted to remote system
+     * wether this entities persisted to remote system
      * <p>
      * <p>
      * when update, check this flag firstly
@@ -48,7 +48,7 @@ public class KoalaBaseEntity {
         return KoalaID;
     }
 
-    public KoalaBaseEntity setKoalaID(Long koalaID) {
+    public KoalaEntity setKoalaID(Long koalaID) {
         KoalaID = koalaID;
         return this;
     }
@@ -57,7 +57,7 @@ public class KoalaBaseEntity {
         return koalaPersistRetryCount;
     }
 
-    public KoalaBaseEntity setKoalaPersistRetryCount(Integer koalaPersistRetryCount) {
+    public KoalaEntity setKoalaPersistRetryCount(Integer koalaPersistRetryCount) {
         this.koalaPersistRetryCount = koalaPersistRetryCount;
         return this;
     }
@@ -66,7 +66,7 @@ public class KoalaBaseEntity {
         return remotePersisted;
     }
 
-    public KoalaBaseEntity setRemotePersisted(Boolean remotePersisted) {
+    public KoalaEntity setRemotePersisted(Boolean remotePersisted) {
         this.remotePersisted = remotePersisted;
         return this;
     }
