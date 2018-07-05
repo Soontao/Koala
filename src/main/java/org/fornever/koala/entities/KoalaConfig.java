@@ -1,5 +1,7 @@
 package org.fornever.koala.entities;
 
+import org.fornever.koala.entities.enums.EIDValidationLevel;
+
 public class KoalaConfig {
 
     /**
@@ -29,6 +31,17 @@ public class KoalaConfig {
      * if data equal zero, failed data will throw sync error direct
      */
     private Integer retryCount = 0;
+
+    private EIDValidationLevel idValidationLevel = EIDValidationLevel.NONE;
+
+    public EIDValidationLevel getIdValidationLevel() {
+        return idValidationLevel;
+    }
+
+    public KoalaConfig setIdValidationLevel(EIDValidationLevel idValidationLevel) {
+        this.idValidationLevel = idValidationLevel;
+        return this;
+    }
 
     /**
      * Even local

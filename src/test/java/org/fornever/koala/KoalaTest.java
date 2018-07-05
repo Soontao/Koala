@@ -1,7 +1,7 @@
 package org.fornever.koala;
 
 import org.fornever.koala.entities.MobilePhone;
-import org.fornever.koala.processors.KoalaProcessors;
+import org.fornever.koala.processors.impl.KoalaProcessors;
 import org.junit.Test;
 
 public class KoalaTest {

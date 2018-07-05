@@ -2,12 +2,18 @@ package org.fornever.koala;
 
 import org.fornever.koala.entities.KoalaConfig;
 import org.fornever.koala.entities.KoalaEntity;
-import org.fornever.koala.exceptions.KoalaInstanceNotConfigurationCorrectException;
+import org.fornever.koala.entities.KoalaReferenceEntity;
+import org.fornever.koala.entities.ValidationError;
+import org.fornever.koala.entities.enums.EKoalaInstanceState;
+import org.fornever.koala.exceptions.KoalaInstanceConfigurationException;
+import org.fornever.koala.exceptions.NotImplementationException;
+import org.fornever.koala.exceptions.ValidationException;
 import org.fornever.koala.exceptions.WriteFailedException;
-import org.fornever.koala.processors.KoalaProcessors;
+import org.fornever.koala.processors.impl.KoalaProcessors;
 import org.fornever.koala.schedule.IScheduleRunner;
 import org.fornever.koala.schedule.impl.ScheduleRunner;
 
+import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
 
@@ -18,7 +24,7 @@ import java.util.logging.Logger;
  * @param <S> Search Prarameter Type
  * @author Theo Sun
  */
-public class Koala<T extends KoalaEntity, S> {
+public class Koala<T, S> {
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
@@ -54,14 +60,25 @@ public class Koala<T extends KoalaEntity, S> {
 
     }
 
-    public T save(T entity) throws WriteFailedException {
+    public T save(T entity) throws WriteFailedException, NotImplementationException, ValidationException {
+        ValidationError errors = this.processors.getValidator().validation(entity);
+        if (errors.haveError.get()) {
+            throw new ValidationException().setErrors(errors);
+        }
+        KoalaReferenceEntity ref = new KoalaReferenceEntity()
+                .setRefID(this.processors.getKeyAccessor().getKey(entity))
+                .setRefEntityName(entity.getClass().getName())
+                .setCreateAt(new Date())
+                .setUpdateAt(new Date())
+                .setState(EKoalaInstanceState.WILL_CREATE);
+        this.processors.getReferenceUpdator().updateKoalaReference(null, ref);
         return this.processors.getSaveProcessor().save(entity);
     }
 
     /**
      * start sync
      */
-    public void start() throws KoalaInstanceNotConfigurationCorrectException {
+    public void start() throws KoalaInstanceConfigurationException {
         this.processors.checkKoalaInstanceWork();
         if (this.scheduler != null) {
 
