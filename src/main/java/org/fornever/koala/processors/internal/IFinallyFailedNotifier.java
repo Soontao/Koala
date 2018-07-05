@@ -1,15 +1,13 @@
-package org.fornever.koala.processors.koala;
+package org.fornever.koala.processors.internal;
 
-import org.fornever.koala.entities.KoalaEntity;
 import org.fornever.koala.exceptions.WriteFailedException;
-import org.fornever.koala.processors.IKoalaProcessor;
 
 /**
  * sync data failed after retry, maybe write/update/delete failed from remote
  *
  * @param <T>
  */
-public interface IFinallyFailedNotifier<T> extends IKoalaProcessor {
+public interface IFinallyFailedNotifier<T> {
 
     void notify(WriteFailedException exception);
 

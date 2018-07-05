@@ -1,6 +1,6 @@
 package org.fornever.koala.entities;
 
-import org.fornever.koala.entities.enums.EIDValidationLevel;
+import org.fornever.koala.entities.enums.EConsistenceLevel;
 
 public class KoalaConfig {
 
@@ -26,28 +26,22 @@ public class KoalaConfig {
     private Boolean syncEvenDataChanged = true;
 
     /**
-     * Even sync failed, koala server will retry later
+     * Even sync failed, internal server will retry later
      * <p>
      * if data equal zero, failed data will throw sync error direct
      */
-    private Integer retryCount = 0;
+    private Integer maxRetry = 0;
 
-    private EIDValidationLevel idValidationLevel = EIDValidationLevel.NONE;
+    private EConsistenceLevel consistenceLevel = EConsistenceLevel.DEFAULT;
 
-    public EIDValidationLevel getIdValidationLevel() {
-        return idValidationLevel;
+    public EConsistenceLevel getConsistenceLevel() {
+        return consistenceLevel;
     }
 
-    public KoalaConfig setIdValidationLevel(EIDValidationLevel idValidationLevel) {
-        this.idValidationLevel = idValidationLevel;
+    public KoalaConfig setConsistenceLevel(EConsistenceLevel consistenceLevel) {
+        this.consistenceLevel = consistenceLevel;
         return this;
     }
-
-    /**
-     * Even local
-     */
-    private Boolean forceReadFromRemote = false;
-
 
     public Integer getRemoteTPS() {
         return remoteTPS;
@@ -76,12 +70,12 @@ public class KoalaConfig {
         return this;
     }
 
-    public Integer getRetryCount() {
-        return retryCount;
+    public Integer getMaxRetry() {
+        return maxRetry;
     }
 
-    public KoalaConfig setRetryCount(Integer retryCount) {
-        this.retryCount = retryCount;
+    public KoalaConfig setMaxRetry(Integer maxRetry) {
+        this.maxRetry = maxRetry;
         return this;
     }
 }

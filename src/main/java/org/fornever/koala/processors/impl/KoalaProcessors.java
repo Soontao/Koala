@@ -6,7 +6,7 @@ import org.fornever.koala.entities.ValidationError;
 import org.fornever.koala.exceptions.KoalaInstanceConfigurationException;
 import org.fornever.koala.exceptions.NotImplementationException;
 import org.fornever.koala.processors.entity.*;
-import org.fornever.koala.processors.koala.*;
+import org.fornever.koala.processors.internal.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -198,7 +198,7 @@ public class KoalaProcessors<T, S> {
 
 
     /**
-     * check this koala instance can do basis data transfer
+     * check this internal instance can do basis data transfer
      *
      * @throws KoalaInstanceConfigurationException
      */

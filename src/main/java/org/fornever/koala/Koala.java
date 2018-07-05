@@ -9,9 +9,9 @@ import org.fornever.koala.exceptions.KoalaInstanceConfigurationException;
 import org.fornever.koala.exceptions.NotImplementationException;
 import org.fornever.koala.exceptions.ValidationException;
 import org.fornever.koala.exceptions.WriteFailedException;
+import org.fornever.koala.processors.IKoalaProcessors;
 import org.fornever.koala.processors.impl.KoalaProcessors;
 import org.fornever.koala.schedule.IScheduleRunner;
-import org.fornever.koala.schedule.impl.ScheduleRunner;
 
 import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,14 +35,14 @@ public class Koala<T, S> {
 
     private KoalaConfig config = new KoalaConfig();
 
-    private IScheduleRunner<T, S> scheduleRunner = ScheduleRunner.DefaultRunner;
+    private IScheduleRunner<T, S> scheduleRunner;
 
-    private KoalaProcessors<T, S> processors;
+    private IKoalaProcessors<T, S> processors;
 
     private Koala() {
     }
 
-    public static <T1 extends KoalaEntity, S1> Koala<T1, S1> New(KoalaProcessors<T1, S1> processors) {
+    public static <T1 extends KoalaEntity, S1> Koala<T1, S1> New(IKoalaProcessors<T1, S1> processors) {
         return new Koala<T1, S1>().setProcessors(processors);
     }
 
@@ -51,7 +51,7 @@ public class Koala<T, S> {
         return this;
     }
 
-    public Koala<T, S> setProcessors(KoalaProcessors<T, S> processors) {
+    public Koala<T, S> setProcessors(IKoalaProcessors<T, S> processors) {
         this.processors = processors;
         return this;
     }
@@ -61,7 +61,7 @@ public class Koala<T, S> {
     }
 
     public T save(T entity) throws WriteFailedException, NotImplementationException, ValidationException {
-        ValidationError errors = this.processors.getValidator().validation(entity);
+        ValidationError errors = this.processors.getLocalValidator().validation(entity);
         if (errors.haveError.get()) {
             throw new ValidationException().setErrors(errors);
         }
@@ -72,14 +72,13 @@ public class Koala<T, S> {
                 .setUpdateAt(new Date())
                 .setState(EKoalaInstanceState.WILL_CREATE);
         this.processors.getReferenceUpdator().updateKoalaReference(null, ref);
-        return this.processors.getSaveProcessor().save(entity);
+        return this.processors.getLocalSaveProcessor().save(entity);
     }
 
     /**
      * start sync
      */
     public void start() throws KoalaInstanceConfigurationException {
-        this.processors.checkKoalaInstanceWork();
         if (this.scheduler != null) {
 
         }

@@ -3,6 +3,7 @@ package org.fornever.koala.entities.enums;
 public enum EKoalaInstanceState {
 
     PEACE,
+
     WILL_CREATE,
     WILL_UPDATE,
     WILL_DELETE,
@@ -12,5 +13,7 @@ public enum EKoalaInstanceState {
     FAIL_CREATE,
     FAIL_UPDATE,
     FAIL_DELETE,
+
+    OUT_OF_DATE,
 
 }

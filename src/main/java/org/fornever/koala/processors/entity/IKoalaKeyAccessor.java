@@ -1,4 +1,4 @@
-package org.fornever.koala.processors.koala;
+package org.fornever.koala.processors.entity;
 
 public interface IKoalaKeyAccessor<T> {
 

@@ -1,10 +1,9 @@
-package org.fornever.koala.processors.koala;
+package org.fornever.koala.processors.internal;
 
 import org.fornever.koala.entities.ValidationError;
 import org.fornever.koala.exceptions.NotImplementationException;
-import org.fornever.koala.processors.IKoalaProcessor;
 
-public interface IEntityValidator<T> extends IKoalaProcessor {
+public interface IEntityValidator<T> {
 
     ValidationError validation(T entity) throws NotImplementationException;
 

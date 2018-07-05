@@ -1,6 +1,6 @@
 package org.fornever.koala.entities.enums;
 
-public enum EIDValidationLevel {
+public enum EValidationLevel {
 
     /**
      * Dont check whether id existing, wait error happened on local or remote db
