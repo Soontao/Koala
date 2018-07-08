@@ -1,233 +1,233 @@
 package org.fornever.koala.processors.impl;
 
+import com.google.inject.Inject;
+import org.fornever.koala.processors.IKoalaProcessors;
+import org.fornever.koala.processors.entity.crud.*;
+import org.fornever.koala.processors.entity.helper.IKoalaKeyAccessor;
+import org.fornever.koala.processors.internal.IFinallyFailedNotifier;
+import org.fornever.koala.processors.internal.IKoalaInstanceSelector;
+import org.fornever.koala.processors.internal.abs.AEntityValidator;
+import org.fornever.koala.processors.internal.abs.AKoalaReferenceUpdater;
+import org.fornever.koala.types.annotations.LocalProcessor;
+import org.fornever.koala.types.annotations.RemoteProcessor;
 
-import org.fornever.koala.entities.KoalaEntity;
-import org.fornever.koala.entities.ValidationError;
-import org.fornever.koala.exceptions.KoalaInstanceConfigurationException;
-import org.fornever.koala.exceptions.NotImplementationException;
-import org.fornever.koala.processors.entity.*;
-import org.fornever.koala.processors.internal.*;
+public class KoalaProcessors<T, K, S> implements IKoalaProcessors<T, K, S> {
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+	private IRetriveEntityProcessor<T> localRetreiveProcessor;
+	private IRetriveEntityProcessor<T> remoteRetrieveProcessor;
+	private IReadEntityProcessor<T, S> localReadProcessor;
+	private IReadEntityProcessor<T, S> remoteReadProcessor;
+	private ISaveEntityProcessor<T> localSaveProcessor;
+	private ISaveEntityProcessor<T> remoteSaveProcessor;
+	private IUpdateEntityProcessor<T, K> localUpdateProcessor;
+	private IUpdateEntityProcessor<T, K> remoteUpdateProcessor;
+	private IDeleteEntityProcessor<K> localDeleteProcessor;
+	private IDeleteEntityProcessor<K> remoteDeleteProcessor;
+	private AEntityValidator<T> localValidator;
+	private AEntityValidator<T> remoteValidator;
+	private IKoalaKeyAccessor<T, K> keyAccessor;
+	private IKoalaInstanceSelector<T> persistSelector;
+	private IFinallyFailedNotifier<T> finallyFailedNotifier;
+	private AKoalaReferenceUpdater<K> referenceUpdator;
 
-public class KoalaProcessors<T, S> {
+	@Override
+	public IRetriveEntityProcessor<T> getLocalRetrieveProcessor() {
+		return localRetreiveProcessor;
+	}
 
-    protected IKoalaInstanceSelector<T> persistSelector;
-    protected IRetriveEntityProcessor<T> retriveProcessor;
-    protected IReadEntityProcessor<T, S> readProcessor;
-    protected ISaveEntityProcessor<T> saveProcessor;
-    protected IUpdateEntityProcessor<T> updateProcessor;
-    protected IDeleteEntityProcessor deleteProcessor = key -> {
-        throw new NotImplementationException();
-    };
-    protected IRetriveEntityProcessor<T> remoteRetriveProcessor;
-    protected IReadEntityProcessor<T, S> remoteReadProcessor;
-    protected ISaveEntityProcessor<T> remoteSaveProcessor;
-    protected IUpdateEntityProcessor<T> remoteUpdateProcessor = (entity) -> {
-        throw new NotImplementationException();
-    };
-    protected IDeleteEntityProcessor remoteDeleteProcessor = key -> {
-        throw new NotImplementationException();
-    };
+	@Inject
+	public KoalaProcessors<T, K, S> setLocalRetreiveProcessor(
+			@LocalProcessor IRetriveEntityProcessor<T> localRetreiveProcessor
+	) {
+		this.localRetreiveProcessor = localRetreiveProcessor;
+		return this;
+	}
 
-    protected IKoalaKeyAccessor<T> keyAccessor;
+	@Override
+	public IRetriveEntityProcessor<T> getRemoteRetrieveProcessor() {
+		return remoteRetrieveProcessor;
+	}
 
-    protected IEntityValidator<T> localIDValidator = e -> {
-        throw new NotImplementationException();
-    };
+	@Inject
+	public KoalaProcessors<T, K, S> setRemoteRetrieveProcessor(
+			@RemoteProcessor IRetriveEntityProcessor<T> remoteRetrieveProcessor
+	) {
+		this.remoteRetrieveProcessor = remoteRetrieveProcessor;
+		return this;
+	}
 
-    protected IEntityValidator<T> remoteIDValidator = e -> {
-        throw new NotImplementationException();
-    };
+	@Override
+	public IReadEntityProcessor<T, S> getLocalReadProcessor() {
+		return localReadProcessor;
+	}
 
-    protected IKoalaReferenceUpdator<T> referenceUpdator;
+	@Inject
+	public KoalaProcessors<T, K, S> setLocalReadProcessor(
+			@LocalProcessor IReadEntityProcessor<T, S> localReadProcessor
+	) {
+		this.localReadProcessor = localReadProcessor;
+		return this;
+	}
 
-    protected IEntityValidator<T> validator = e -> {
-        return new ValidationError();
-    };
+	@Override
+	public IReadEntityProcessor<T, S> getRemoteReadProcessor() {
+		return remoteReadProcessor;
+	}
 
+	@Inject
+	public KoalaProcessors<T, K, S> setRemoteReadProcessor(
+			@RemoteProcessor IReadEntityProcessor<T, S> remoteReadProcessor
+	) {
+		this.remoteReadProcessor = remoteReadProcessor;
+		return this;
+	}
 
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+	@Override
+	public ISaveEntityProcessor<T> getLocalSaveProcessor() {
+		return localSaveProcessor;
+	}
 
-    protected IFinallyFailedNotifier finallySaveFailedToRemoteProcessor = ex -> {
-        this.logger.log(Level.WARNING, String.format("Entity %d save to remote finally", ex.getEntity().getKoalaID()));
-    };
+	@Inject
+	public KoalaProcessors<T, K, S> setLocalSaveProcessor(
+			@LocalProcessor ISaveEntityProcessor<T> localSaveProcessor
+	) {
+		this.localSaveProcessor = localSaveProcessor;
+		return this;
+	}
 
-    private KoalaProcessors() {
-    }
+	@Override
+	public ISaveEntityProcessor<T> getRemoteSaveProcessor() {
+		return remoteSaveProcessor;
+	}
 
-    public static <T1 extends KoalaEntity, S1> KoalaProcessors<T1, S1> New() {
-        return new KoalaProcessors<>();
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setRemoteSaveProcessor(
+			@RemoteProcessor ISaveEntityProcessor<T> remoteSaveProcessor
+	) {
+		this.remoteSaveProcessor = remoteSaveProcessor;
+		return this;
+	}
 
-    public IKoalaInstanceSelector<T> getPersistSelector() {
-        return persistSelector;
-    }
+	@Override
+	public IUpdateEntityProcessor<T, K> getLocalUpdateProcessor() {
+		return localUpdateProcessor;
+	}
 
-    public KoalaProcessors<T, S> setPersistSelector(IKoalaInstanceSelector<T> persistSelector) {
-        this.persistSelector = persistSelector;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setLocalUpdateProcessor(
+			@LocalProcessor IUpdateEntityProcessor<T, K> localUpdateProcessor
+	) {
+		this.localUpdateProcessor = localUpdateProcessor;
+		return this;
+	}
 
-    public IKoalaKeyAccessor<T> getKeyAccessor() {
-        return keyAccessor;
-    }
+	@Override
+	public IUpdateEntityProcessor<T, K> getRemoteUpdateProcessor() {
+		return remoteUpdateProcessor;
+	}
 
-    public KoalaProcessors<T, S> setKeyAccessor(IKoalaKeyAccessor<T> keyAccessor) {
-        this.keyAccessor = keyAccessor;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setRemoteUpdateProcessor(
+			@RemoteProcessor IUpdateEntityProcessor<T, K> remoteUpdateProcessor
+	) {
+		this.remoteUpdateProcessor = remoteUpdateProcessor;
+		return this;
+	}
 
-    public IKoalaReferenceUpdator<T> getReferenceUpdator() {
-        return referenceUpdator;
-    }
+	@Override
+	public IDeleteEntityProcessor<K> getLocalDeleteProcessor() {
+		return localDeleteProcessor;
+	}
 
-    public KoalaProcessors<T, S> setReferenceUpdator(IKoalaReferenceUpdator<T> referenceUpdator) {
-        this.referenceUpdator = referenceUpdator;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setLocalDeleteProcessor(
+			@LocalProcessor IDeleteEntityProcessor<K> localDeleteProcessor
+	) {
+		this.localDeleteProcessor = localDeleteProcessor;
+		return this;
+	}
 
-    public IRetriveEntityProcessor<T> getRetriveProcessor() {
-        return retriveProcessor;
-    }
+	@Override
+	public IDeleteEntityProcessor<K> getRemoteDeleteProcessor() {
+		return remoteDeleteProcessor;
+	}
 
-    public KoalaProcessors<T, S> setRetriveProcessor(IRetriveEntityProcessor<T> retriveProcessor) {
-        this.retriveProcessor = retriveProcessor;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setRemoteDeleteProcessor(
+			@RemoteProcessor IDeleteEntityProcessor<K> remoteDeleteProcessor
+	) {
+		this.remoteDeleteProcessor = remoteDeleteProcessor;
+		return this;
+	}
 
-    public IEntityValidator<T> getValidator() {
-        return validator;
-    }
+	@Override
+	public AEntityValidator<T> getLocalValidator() {
+		return localValidator;
+	}
 
-    public KoalaProcessors<T, S> setValidator(IEntityValidator<T> validator) {
-        this.validator = validator;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setLocalValidator(
+			@LocalProcessor AEntityValidator<T> localValidator
+	) {
+		this.localValidator = localValidator;
+		return this;
+	}
 
-    public IReadEntityProcessor<T, S> getReadProcessor() {
-        return readProcessor;
-    }
+	@Override
+	public AEntityValidator<T> getRemoteValidator() {
+		return remoteValidator;
+	}
 
-    public KoalaProcessors<T, S> setReadProcessor(IReadEntityProcessor<T, S> readProcessor) {
-        this.readProcessor = readProcessor;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setRemoteValidator(
+			@RemoteProcessor AEntityValidator<T> remoteValidator
+	) {
+		this.remoteValidator = remoteValidator;
+		return this;
+	}
 
-    public ISaveEntityProcessor<T> getSaveProcessor() {
-        return saveProcessor;
-    }
+	@Override
+	public IKoalaKeyAccessor<T, K> getKeyAccessor() {
+		return keyAccessor;
+	}
 
-    public KoalaProcessors<T, S> setSaveProcessor(ISaveEntityProcessor<T> saveProcessor) {
-        this.saveProcessor = saveProcessor;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setKeyAccessor(IKoalaKeyAccessor<T, K> keyAccessor) {
+		this.keyAccessor = keyAccessor;
+		return this;
+	}
 
-    public IUpdateEntityProcessor<T> getUpdateProcessor() {
-        return updateProcessor;
-    }
+	@Override
+	public IKoalaInstanceSelector<T> getPersistSelector() {
+		return persistSelector;
+	}
 
-    public KoalaProcessors<T, S> setUpdateProcessor(IUpdateEntityProcessor<T> updateProcessor) {
-        this.updateProcessor = updateProcessor;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setPersistSelector(IKoalaInstanceSelector<T> persistSelector) {
+		this.persistSelector = persistSelector;
+		return this;
+	}
 
-    public IDeleteEntityProcessor getDeleteProcessor() {
-        return deleteProcessor;
-    }
+	@Override
+	public IFinallyFailedNotifier<T> getFinallyFailedNotifier() {
+		return finallyFailedNotifier;
+	}
 
-    public KoalaProcessors<T, S> setDeleteProcessor(IDeleteEntityProcessor deleteProcessor) {
-        this.deleteProcessor = deleteProcessor;
-        return this;
-    }
+	@Inject
+	public KoalaProcessors<T, K, S> setFinallyFailedNotifier(IFinallyFailedNotifier<T> finallyFailedNotifier) {
+		this.finallyFailedNotifier = finallyFailedNotifier;
+		return this;
+	}
 
-    public IRetriveEntityProcessor<T> getRemoteRetriveProcessor() {
-        return remoteRetriveProcessor;
-    }
+	@Override
+	public AKoalaReferenceUpdater<K> getReferenceUpdator() {
+		return referenceUpdator;
+	}
 
-    public KoalaProcessors<T, S> setRemoteRetriveProcessor(IRetriveEntityProcessor<T> remoteRetriveProcessor) {
-        this.remoteRetriveProcessor = remoteRetriveProcessor;
-        return this;
-    }
-
-    public IReadEntityProcessor<T, S> getRemoteReadProcessor() {
-        return remoteReadProcessor;
-    }
-
-    public KoalaProcessors<T, S> setRemoteReadProcessor(IReadEntityProcessor<T, S> remoteReadProcessor) {
-        this.remoteReadProcessor = remoteReadProcessor;
-        return this;
-    }
-
-    public ISaveEntityProcessor<T> getRemoteSaveProcessor() {
-        return remoteSaveProcessor;
-    }
-
-    public KoalaProcessors<T, S> setRemoteSaveProcessor(ISaveEntityProcessor<T> remoteSaveProcessor) {
-        this.remoteSaveProcessor = remoteSaveProcessor;
-        return this;
-    }
-
-    public IUpdateEntityProcessor<T> getRemoteUpdateProcessor() {
-        return remoteUpdateProcessor;
-    }
-
-    public KoalaProcessors<T, S> setRemoteUpdateProcessor(IUpdateEntityProcessor<T> remoteUpdateProcessor) {
-        this.remoteUpdateProcessor = remoteUpdateProcessor;
-        return this;
-    }
-
-    public IDeleteEntityProcessor getRemoteDeleteProcessor() {
-        return remoteDeleteProcessor;
-    }
-
-    public KoalaProcessors<T, S> setRemoteDeleteProcessor(IDeleteEntityProcessor remoteDeleteProcessor) {
-        this.remoteDeleteProcessor = remoteDeleteProcessor;
-        return this;
-    }
-
-    public IFinallyFailedNotifier getFinallySaveFailedToRemoteProcessor() {
-        return finallySaveFailedToRemoteProcessor;
-    }
-
-    public KoalaProcessors<T, S> setFinallySaveFailedToRemoteProcessor(IFinallyFailedNotifier finallySaveFailedToRemoteProcessor) {
-        this.finallySaveFailedToRemoteProcessor = finallySaveFailedToRemoteProcessor;
-        return this;
-    }
-
-
-    /**
-     * check this internal instance can do basis data transfer
-     *
-     * @throws KoalaInstanceConfigurationException
-     */
-    public void checkKoalaInstanceWork() throws KoalaInstanceConfigurationException {
-        if (this.readProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set read processors");
-        }
-        if (this.retriveProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set retrive processors");
-        }
-        if (this.persistSelector == null) {
-            throw new KoalaInstanceConfigurationException("You must set persist selector");
-        }
-        if (this.saveProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set save processors");
-        }
-        if (this.updateProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set update processors");
-        }
-        if (this.remoteReadProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set remote read processors");
-        }
-        if (this.remoteRetriveProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set remote retrive processors");
-        }
-        if (this.remoteSaveProcessor == null) {
-            throw new KoalaInstanceConfigurationException("You must set remote save processors");
-        }
-    }
-
+	@Inject
+	public KoalaProcessors<T, K, S> setReferenceUpdator(AKoalaReferenceUpdater<K> referenceUpdator) {
+		this.referenceUpdator = referenceUpdator;
+		return this;
+	}
 
 }

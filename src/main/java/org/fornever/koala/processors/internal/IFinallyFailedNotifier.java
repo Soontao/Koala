@@ -9,6 +9,6 @@ import org.fornever.koala.exceptions.WriteFailedException;
  */
 public interface IFinallyFailedNotifier<T> {
 
-    void notify(WriteFailedException exception);
+	void notify(WriteFailedException exception);
 
 }

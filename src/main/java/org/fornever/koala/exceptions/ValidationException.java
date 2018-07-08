@@ -1,18 +1,18 @@
 package org.fornever.koala.exceptions;
 
-import org.fornever.koala.entities.ValidationError;
+import org.fornever.koala.types.internal.ValidationError;
 
 public class ValidationException extends KoalaBaseException {
 
-    private ValidationError errors;
+	private ValidationError errors;
 
-    public ValidationError getErrors() {
-        return errors;
-    }
+	public ValidationError getErrors() {
+		return errors;
+	}
 
-    public ValidationException setErrors(ValidationError errors) {
-        this.errors = errors;
-        return this;
-    }
+	public ValidationException setErrors(ValidationError errors) {
+		this.errors = errors;
+		return this;
+	}
 
 }

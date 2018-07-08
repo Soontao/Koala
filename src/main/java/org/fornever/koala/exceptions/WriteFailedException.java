@@ -1,27 +1,27 @@
 package org.fornever.koala.exceptions;
 
-import org.fornever.koala.entities.KoalaEntity;
-import org.fornever.koala.entities.enums.EWriteType;
+import org.fornever.koala.types.enums.EOperationType;
+import org.fornever.koala.types.internal.KoalaEntity;
 
 public class WriteFailedException extends KoalaBaseException {
 
-    private KoalaEntity entity;
+	private KoalaEntity entity;
 
-    private EWriteType type;
+	private EOperationType type;
 
-    public WriteFailedException(KoalaEntity entity, EWriteType type) {
-        super();
-        this.entity = entity;
-        this.type = type;
-    }
+	public WriteFailedException(KoalaEntity entity, EOperationType type) {
+		super();
+		this.entity = entity;
+		this.type = type;
+	}
 
-    public KoalaEntity getEntity() {
-        return entity;
-    }
+	public KoalaEntity getEntity() {
+		return entity;
+	}
 
-    public WriteFailedException setEntity(KoalaEntity entity) {
-        this.entity = entity;
-        return this;
-    }
+	public WriteFailedException setEntity(KoalaEntity entity) {
+		this.entity = entity;
+		return this;
+	}
 
 }
