@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/Soontao/Koala/tree/master.svg?style=shield)](https://circleci.com/gh/Soontao/Koala/tree/master) [![codecov](https://codecov.io/gh/Soontao/Koala/branch/master/graph/badge.svg)](https://codecov.io/gh/Soontao/Koala)
 
-Java middleware for transferring requests from modern system to slow system
+Java middleware for handling high loads in a short time
 
 ## Overview
 
@@ -12,15 +12,15 @@ Java middleware for transferring requests from modern system to slow system
 
 Some concepts appeared in this project.
 
-* Koala, is an abstract framework, just define a lifecyle to sync data from local to remote, and expose APIs for external system.
+* Koala, is an abstract framework, just define a lifecycle to sync data from local to remote, and expose APIs for external system.
 * Koala instance, designed as Data Access Object, users can use it access data from local & remote transparently.
-* Koala entity, each koala instance will bind a entity type, and each entity have some general fields, like createBy or updateAt, these fields will be used to control sync lifecycle.
+* Koala reference, for control data lifecycle between local and remote.
+* koala scheduler, run periodic sync data to remote.
 * Koala processors, developers need to develop processors for access local & remote api, throw exceptions and more, Koala lifecycle is implemented by these processors.
 
 ## Limitation
 
 * Users need test remote system performance manually, and use the test result to config koala
-* Remote system need add addtional fields for koala framework
-* Koala will only support `Long` type ID, it will be the primary key in local RDB
+
 
 
