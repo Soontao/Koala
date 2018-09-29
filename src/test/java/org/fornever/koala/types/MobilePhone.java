@@ -4,11 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+import org.fornever.koala.types.internal.KoalaEntity;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-public class MobilePhone implements Serializable {
+public class MobilePhone extends KoalaEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -50,12 +53,13 @@ public class MobilePhone implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof MobilePhone)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof MobilePhone))
+			return false;
 		MobilePhone that = (MobilePhone) o;
-		return Objects.equals(getId(), that.getId()) &&
-				Objects.equals(getPhoneNumber(), that.getPhoneNumber()) &&
-				Objects.equals(getPhoneOwnerName(), that.getPhoneOwnerName());
+		return Objects.equals(getId(), that.getId()) && Objects.equals(getPhoneNumber(), that.getPhoneNumber())
+				&& Objects.equals(getPhoneOwnerName(), that.getPhoneOwnerName());
 	}
 
 	@Override
@@ -65,10 +69,7 @@ public class MobilePhone implements Serializable {
 
 	@Override
 	public String toString() {
-		return "MobilePhone{" +
-				"id=" + id +
-				", phoneNumber='" + phoneNumber + '\'' +
-				", phoneOwnerName='" + phoneOwnerName + '\'' +
-				'}';
+		return "MobilePhone{" + "id=" + id + ", phoneNumber='" + phoneNumber + '\'' + ", phoneOwnerName='"
+				+ phoneOwnerName + '\'' + '}';
 	}
 }

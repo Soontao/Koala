@@ -2,6 +2,7 @@ package org.fornever.koala.impl;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+
 import org.fornever.koala.IKoala;
 import org.fornever.koala.exceptions.NotImplementationException;
 import org.fornever.koala.exceptions.ValidationException;
@@ -25,12 +26,9 @@ import java.util.logging.Logger;
 public class Koala<T, K, S> implements IKoala<T, K, S> {
 
 	private Logger logger = Logger.getLogger(getClass().getName());
-	private KoalaConfig config = new KoalaConfig();
+	private KoalaConfig config = new KoalaConfig(); 
 	private AScheduleRunner scheduleRunner;
 	private IKoalaProcessors<T, K, S> processors;
-
-	private Koala() {
-	}
 
 	public static <T1, K1, S1> Koala<T1, K1, S1> New(KoalaConfig<T1, K1, S1> config) {
 		return Guice.createInjector(config.getModules()).getInstance(Koala.class);
