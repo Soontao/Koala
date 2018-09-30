@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.fornever.koala.enums.ConditionOperator;
-import org.fornever.koala.enums.OrderType;
+import org.fornever.koala.type.enums.ConditionOperator;
+import org.fornever.koala.type.enums.OrderType;
 
 public class SearchParameter {
 

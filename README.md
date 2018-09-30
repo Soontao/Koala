@@ -6,7 +6,7 @@ Java middleware for handling high loads in a short time
 
 ## Overview
 
-![](https://res.cloudinary.com/digf90pwi/image/upload/v1538199859/5b38cd62e4b045a5a30e4f48_zzoyqh.png)
+![Arch](http://on-img.com/chart_image/5b38cd62e4b045a5a30e4f48.png)
 
 ## Concepts
 
@@ -21,6 +21,3 @@ Some concepts appeared in this project.
 ## Limitation
 
 * Users need test remote system performance manually, and use the test result to config koala
-
-
-

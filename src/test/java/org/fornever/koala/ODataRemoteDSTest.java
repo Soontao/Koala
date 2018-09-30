@@ -1,6 +1,6 @@
 package org.fornever.koala;
 
-import org.fornever.koala.remote.ODataRemoteDataSource;
+import org.fornever.koala.ds.remote.ODataRemoteDataSource;
 import org.fornever.koala.type.Row;
 import org.fornever.koala.type.SearchParameter;
 import org.junit.Assume;
@@ -62,8 +62,9 @@ public class ODataRemoteDSTest {
 		assert created != null;
 		String objectId = created.get("ObjectID").toString();
 		Row updated = new Row();
+		updated.put("ObjectID", objectId);
 		updated.put("ID", "123");
-		Row returned = this.ds.update(objectId, updated);
+		Row returned = this.ds.update(updated);
 		assert returned.get("ID").equals("123");
 		assert this.ds.delete(objectId);
 	}

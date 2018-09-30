@@ -1,4 +1,4 @@
-package org.fornever.koala.remote;
+package org.fornever.koala.ds.remote;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,6 +18,8 @@ import org.fornever.koala.type.SearchParameter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 
@@ -25,10 +27,16 @@ public class ODataRemoteDataSource implements IDataSource {
 
 	private static final String X_CSRF_TOKEN = "x-csrf-token";
 
+	@Inject
+	@Named("odata:endpoint")
 	private String endpoint;
 
+	@Inject
+	@Named("odata:username")
 	private String username;
 
+	@Inject
+	@Named("odata:password")
 	private String password;
 
 	private Map<String, String> headers = new HashMap<String, String>() {
@@ -46,6 +54,9 @@ public class ODataRemoteDataSource implements IDataSource {
 
 	};
 
+	public ODataRemoteDataSource() {
+	}
+
 	public ODataRemoteDataSource(String collectionURI, String username, String password) {
 		super();
 		this.endpoint = collectionURI;
@@ -53,6 +64,11 @@ public class ODataRemoteDataSource implements IDataSource {
 		this.password = password;
 		Unirest.setHttpClient(
 				org.apache.http.impl.client.HttpClients.custom().setDefaultCookieStore(new BasicCookieStore()).build());
+	}
+
+	@Override
+	public Object fromRowToKey(Row row) throws Throwable {
+		return row.get("ObjectID");
 	}
 
 	private void _fetchCSRFToken() throws Throwable {
@@ -385,7 +401,9 @@ public class ODataRemoteDataSource implements IDataSource {
 	}
 
 	@Override
-	public Row update(Object key, Row row) throws Throwable {
+	public Row update(Row row) throws Throwable {
+
+		Object key = this.fromRowToKey(row);
 
 		String uri = this._formatObjectURI(key);
 
@@ -412,7 +430,7 @@ public class ODataRemoteDataSource implements IDataSource {
 			if (res.getHeaders().getFirst(X_CSRF_TOKEN).equals("Required")) {
 				this._fetchCSRFToken();
 				// retry
-				return this.update(key, row);
+				return this.update(row);
 
 			} else {
 

@@ -5,4 +5,4 @@
  * @author theosun
  *
  */
-package org.fornever.koala.local;
+package org.fornever.koala.ds.remote;

@@ -5,4 +5,4 @@
  * @author theosun
  *
  */
-package org.fornever.koala.remote;
+package org.fornever.koala.type.enums;

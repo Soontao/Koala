@@ -1,6 +1,6 @@
 package org.fornever.koala.type;
 
-import org.fornever.koala.enums.ConditionOperator;
+import org.fornever.koala.type.enums.ConditionOperator;
 
 public class Condition {
 

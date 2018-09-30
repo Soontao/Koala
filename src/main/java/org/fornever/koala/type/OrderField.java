@@ -1,6 +1,6 @@
 package org.fornever.koala.type;
 
-import org.fornever.koala.enums.OrderType;
+import org.fornever.koala.type.enums.OrderType;
 
 public class OrderField {
 

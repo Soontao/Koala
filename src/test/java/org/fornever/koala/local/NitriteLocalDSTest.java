@@ -2,6 +2,7 @@ package org.fornever.koala.local;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.NitriteCollection;
+import org.fornever.koala.ds.local.NitriteLocalDataSource;
 import org.fornever.koala.type.Row;
 import org.junit.After;
 import org.junit.Test;
@@ -55,11 +56,11 @@ public class NitriteLocalDSTest {
 	}
 
 	@Test
-	public void testUpdate() {
+	public void testUpdate() throws NumberFormatException, Throwable {
 
 		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
 		rt.put("name", "B2");
-		assert this.ds.update(rt.get("_id"), rt).get("name") == "B2";
+		assert this.ds.update(rt).get("name") == "B2";
 
 	}
 

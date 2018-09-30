@@ -1,4 +1,4 @@
-package org.fornever.koala.enums;
+package org.fornever.koala.type.enums;
 
 public enum ConditionOperator {
 	/**
