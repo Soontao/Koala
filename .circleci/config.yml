@@ -19,6 +19,9 @@ jobs:
     environment:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx1024m
+      TEST_ODATA_PASS: $TEST_ODATA_PASS
+      TEST_ODATA_URI: $TEST_ODATA_URI
+      TEST_ODATA_USER: $TEST_ODATA_USER
     
     steps:
       - checkout
