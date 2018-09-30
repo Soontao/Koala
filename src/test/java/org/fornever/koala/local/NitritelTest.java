@@ -1,7 +1,5 @@
 package org.fornever.koala.local;
 
-import static org.junit.Assert.*;
-
 import java.util.Map;
 
 import org.dizitart.no2.Document;
@@ -41,15 +39,6 @@ public class NitritelTest {
 		assert this.collection.insert(doc).getAffectedCount() > 0;
 	}
 
-	@Test
-	public void testRetrive() {
-		Document doc = new Document();
-		doc.putAll(mapper.convertValue(new Building("Building2", "四川成都3", 123), Map.class));
-		WriteResult r = this.collection.insert(doc);
-		assert r.getAffectedCount() > 0;
-		assert this.collection.getById(r.iterator().next()).get("name") == "Building2";
-	}
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testDelete() {
@@ -59,6 +48,16 @@ public class NitritelTest {
 		assert r.getAffectedCount() > 0;
 		NitriteId id = r.iterator().next();
 		assert this.collection.remove(this.collection.getById(id)).getAffectedCount() > 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testRetrive() {
+		Document doc = new Document();
+		doc.putAll(mapper.convertValue(new Building("Building2", "四川成都3", 123), Map.class));
+		WriteResult r = this.collection.insert(doc);
+		assert r.getAffectedCount() > 0;
+		assert this.collection.getById(r.iterator().next()).get("name") == "Building2";
 	}
 
 	@SuppressWarnings("unchecked")

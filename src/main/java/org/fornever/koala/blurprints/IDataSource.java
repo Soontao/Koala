@@ -8,11 +8,7 @@ import org.fornever.koala.type.SearchParameter;
 
 public interface IDataSource {
 
-	default List<Row> find(SearchParameter param) throws Throwable {
-		throw new NotSupportException();
-	}
-
-	default Row retrive(Object key) throws Throwable {
+	default Row create(Row row) throws Throwable {
 		throw new NotSupportException();
 	}
 
@@ -20,7 +16,11 @@ public interface IDataSource {
 		throw new NotSupportException();
 	}
 
-	default Row create(Row row) throws Throwable {
+	default List<Row> find(SearchParameter param) throws Throwable {
+		throw new NotSupportException();
+	}
+
+	default Row retrieve(Object key) throws Throwable {
 		throw new NotSupportException();
 	}
 

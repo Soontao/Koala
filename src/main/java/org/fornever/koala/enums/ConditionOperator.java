@@ -4,33 +4,33 @@ public enum ConditionOperator {
 	/**
 	 * full equal value
 	 */
-	equal,
+	EQUAL,
 	/**
 	 * not equal value
 	 */
-	not_equal,
+	NOT_EUQAL,
 	/**
 	 * >
 	 */
-	greater_than,
+	GREATER_THAN,
 	/**
 	 * >=
 	 */
-	greater_equal,
+	GREATER_EQUAL,
 	/**
 	 * <
 	 */
-	less_than,
+	LESS_THAN,
 	/**
 	 * <=
 	 */
-	less_equal,
+	LESS_EQUAL,
 	/**
 	 * fuzzy match
 	 */
-	like,
+	LIKE,
 	/**
 	 * equal in list
 	 */
-	in
+	IN
 }

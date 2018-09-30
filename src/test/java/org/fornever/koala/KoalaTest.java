@@ -6,7 +6,7 @@ public class KoalaTest {
 
 	@Test
 	public void test() {
-		
+
 	}
 
 }
