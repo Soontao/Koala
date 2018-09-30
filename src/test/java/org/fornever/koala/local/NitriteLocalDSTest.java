@@ -35,23 +35,39 @@ public class NitriteLocalDSTest {
 
 	@Test
 	public void testCreate() {
+		
 		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
 		assert rt.get("name").equals("Building1");
+		
 	}
 
 	@Test
 	public void testRetrive() {
-		fail("Not yet implemented");
+		
+		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
+		Object id = rt.get("_id");
+		assert this.ds.retrive(id) != null;
+		
 	}
 
 	@Test
 	public void testUpdate() {
-		fail("Not yet implemented");
+		
+		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
+		rt.put("name", "B2");
+		assert this.ds.update(rt.get("_id"), rt).get("name") == "B2";
+		
 	}
 
 	@Test
 	public void testDelete() {
-		fail("Not yet implemented");
+		
+		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
+		Object id = rt.get("_id");
+		assert id != null;
+		assert this.ds.delete(id);
+		assert this.ds.retrive(id) == null;
+
 	}
 
 }
