@@ -4,6 +4,8 @@ import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.NitriteCollection;
 import org.fornever.koala.ds.local.NitriteLocalDataSource;
 import org.fornever.koala.type.Row;
+import org.fornever.koala.type.SearchParameter;
+import org.fornever.koala.type.enums.ConditionOperator;
 import org.junit.After;
 import org.junit.Test;
 
@@ -34,6 +36,15 @@ public class NitriteLocalDSTest {
 		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
 		assert rt.get("name").equals("Building1");
 
+	}
+
+	@Test
+	public void testFind() throws Throwable {
+		Row rt = this.ds.create(mapper.convertValue(new Building("Building1", "四川成都", 123), Row.class));
+		Row f = this.ds.find(SearchParameter.New().addCondition("name", ConditionOperator.EQUAL, "Building1")).stream()
+				.findFirst().get();
+		assert f != null;
+		assert f.get("_id") == rt.get("_id");
 	}
 
 	@Test
