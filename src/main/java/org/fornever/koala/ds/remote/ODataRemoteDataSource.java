@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.http.impl.client.BasicCookieStore;
@@ -25,7 +26,27 @@ import com.mashape.unirest.http.Unirest;
 
 public class ODataRemoteDataSource implements IDataSource {
 
-	private static final String X_CSRF_TOKEN = "x-csrf-token";
+	private static final String S_ACCEPT_LANGUAGE = "Accept-Language";
+
+	private static final String S_ACCEPT = "Accept";
+
+	private static final String S_CONTENT_TYPE = "Content-Type";
+
+	private static final String S_ZH = "zh";
+
+	private static final String S_APPLICATION_JSON = "application/json";
+
+	private static final String S_FETCH = "fetch";
+
+	private static final String S_CAN_NOT_FETCH_TOKEN = "Can not fetch csrf token !";
+
+	private static final String S_PARAM_SKIP = "$skip";
+
+	private static final String S_PARAM_TOP = "$top";
+
+	private static final String S_PARAM_FILTER = "$filter";
+
+	private static final String S_X_CSRF_TOKEN = "x-csrf-token";
 
 	@Inject
 	@Named("odata:endpoint")
@@ -46,10 +67,10 @@ public class ODataRemoteDataSource implements IDataSource {
 		// default headers
 
 		{
-			put(X_CSRF_TOKEN, "fetch");
-			put("Content-Type", "application/json");
-			put("Accept", "application/json");
-			put("Accept-Language", "zh");
+			put(S_X_CSRF_TOKEN, S_FETCH);
+			put(S_CONTENT_TYPE, S_APPLICATION_JSON);
+			put(S_ACCEPT, S_APPLICATION_JSON);
+			put(S_ACCEPT_LANGUAGE, S_ZH);
 		}
 
 	};
@@ -80,8 +101,8 @@ public class ODataRemoteDataSource implements IDataSource {
 
 		this._processResponse(res);
 
-		if (this.headers.get(X_CSRF_TOKEN) == null || this.headers.get(X_CSRF_TOKEN) == "fetch") {
-			throw new Exception("Can not fetch csrf token !");
+		if (this.headers.get(S_X_CSRF_TOKEN) == null || this.headers.get(S_X_CSRF_TOKEN) == S_FETCH) {
+			throw new Exception(S_CAN_NOT_FETCH_TOKEN);
 		}
 
 	}
@@ -92,19 +113,14 @@ public class ODataRemoteDataSource implements IDataSource {
 
 	private Map<String, Object> _formatQueryParametersURI(SearchParameter param) {
 		Map<String, Object> rt = new HashMap<>();
-		if (param.getFieldConditions().size() > 0) {
-			String filter = String.join(" and ",
-					param.getFieldConditions().entrySet().stream().map(this::_mappingConditionToExpr).filter(s -> {
-						if (s == null || s.isEmpty()) {
-							return false;
-						}
-						return false;
-					}).collect(Collectors.toList()));
-			rt.put("$filter", filter);
+		if (!param.getFieldConditions().isEmpty()) {
+			String filter = String.join(" and ", param.getFieldConditions().entrySet().stream()
+					.map(this::_mappingConditionToExpr).filter(s -> Objects.nonNull(s)).collect(Collectors.toList()));
+			rt.put(S_PARAM_FILTER, filter);
 		}
 
-		rt.put("$top", param.getSize());
-		rt.put("$skip", (param.getPage() - 1) * param.getSize());
+		rt.put(S_PARAM_TOP, param.getSize());
+		rt.put(S_PARAM_SKIP, (param.getPage() - 1) * param.getSize());
 
 		return rt;
 
@@ -124,12 +140,11 @@ public class ODataRemoteDataSource implements IDataSource {
 			case NOT_EUQAL:
 				rt = String.format("%s ne '%s'", field, condition.getValue().toString());
 			default:
-				rt = "";
 				break;
 			}
 
 		} else {
-			rt = "";
+
 		}
 
 		return rt;
@@ -159,9 +174,9 @@ public class ODataRemoteDataSource implements IDataSource {
 
 	private void _processResponse(HttpResponse<String> res) throws Throwable {
 		// > set CSRF token
-		String token = res.getHeaders().getFirst(X_CSRF_TOKEN);
+		String token = res.getHeaders().getFirst(S_X_CSRF_TOKEN);
 		if (token != null) {
-			this.headers.put(X_CSRF_TOKEN, token);
+			this.headers.put(S_X_CSRF_TOKEN, token);
 		}
 		// < set CSRF token
 	}
@@ -190,7 +205,7 @@ public class ODataRemoteDataSource implements IDataSource {
 
 		case 403:
 
-			if (res.getHeaders().getFirst(X_CSRF_TOKEN).equals("Required")) {
+			if (res.getHeaders().getFirst(S_X_CSRF_TOKEN).equals("Required")) {
 				this._fetchCSRFToken();
 				// retry
 				return this.create(row);
@@ -242,7 +257,7 @@ public class ODataRemoteDataSource implements IDataSource {
 
 		case 403:
 
-			if (res.getHeaders().getFirst(X_CSRF_TOKEN).equals("Required")) {
+			if (res.getHeaders().getFirst(S_X_CSRF_TOKEN).equals("Required")) {
 				this._fetchCSRFToken();
 				// retry
 				return this.delete(key);
@@ -297,7 +312,7 @@ public class ODataRemoteDataSource implements IDataSource {
 
 		case 403:
 
-			if (res.getHeaders().getFirst(X_CSRF_TOKEN).equals("Required")) {
+			if (res.getHeaders().getFirst(S_X_CSRF_TOKEN).equals("Required")) {
 				this._fetchCSRFToken();
 				// retry
 				return this.find(param);
@@ -360,7 +375,7 @@ public class ODataRemoteDataSource implements IDataSource {
 
 		case 403:
 
-			if (res.getHeaders().getFirst(X_CSRF_TOKEN).equals("Required")) {
+			if (res.getHeaders().getFirst(S_X_CSRF_TOKEN).equals("Required")) {
 				this._fetchCSRFToken();
 				// retry
 				return this.retrieve(key);
@@ -427,7 +442,7 @@ public class ODataRemoteDataSource implements IDataSource {
 
 		case 403:
 
-			if (res.getHeaders().getFirst(X_CSRF_TOKEN).equals("Required")) {
+			if (res.getHeaders().getFirst(S_X_CSRF_TOKEN).equals("Required")) {
 				this._fetchCSRFToken();
 				// retry
 				return this.update(row);
