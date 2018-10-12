@@ -6,6 +6,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.fornever.koala.bindings.annotations.LocalDataSource;
+import org.fornever.koala.bindings.annotations.RemoteDataSource;
 import org.fornever.koala.blurprints.IDataSource;
 import org.fornever.koala.blurprints.ISyncer;
 import org.fornever.koala.type.SyncSnapshotData;
@@ -20,10 +22,11 @@ public class ScheduledExecutorSyncer implements ISyncer {
 	private Queue<SyncSnapshotData> queue;
 
 	@Inject
-
+	@RemoteDataSource
 	private IDataSource remoteDS;
+	
 	@Inject
-	@Named("datasource:local")
+	@LocalDataSource
 	private IDataSource localDS;
 
 	private Runnable sync = () -> {

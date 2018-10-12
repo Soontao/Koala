@@ -2,6 +2,10 @@ package org.fornever.koala;
 
 import java.util.List;
 
+import org.fornever.koala.bindings.annotations.LocalDataSource;
+import org.fornever.koala.bindings.annotations.RemoteDataSource;
+import org.fornever.koala.bindings.annotations.Syncer;
+import org.fornever.koala.bindings.annotations.Validator;
 import org.fornever.koala.blurprints.IDataSource;
 import org.fornever.koala.blurprints.ISyncer;
 import org.fornever.koala.blurprints.IValidator;
@@ -12,24 +16,23 @@ import org.fornever.koala.type.enums.SyncDirection;
 import org.fornever.koala.type.enums.SyncType;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class Koala implements IDataSource {
 
 	@Inject
-	@Named("datasource:local")
+	@LocalDataSource
 	private IDataSource localDS;
 
 	@Inject
-	@Named("datasource:remote")
+	@RemoteDataSource
 	private IDataSource remoteDS;
 
 	@Inject
-	@Named("validator")
+	@Validator
 	private IValidator localValidator;
 
 	@Inject
-	@Named("syncer")
+	@Syncer
 	private ISyncer syncer;
 
 	public IDataSource getLocalDS() {

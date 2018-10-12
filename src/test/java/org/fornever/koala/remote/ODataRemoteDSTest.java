@@ -1,4 +1,4 @@
-package org.fornever.koala;
+package org.fornever.koala.remote;
 
 import org.fornever.koala.ds.remote.ODataRemoteDataSource;
 import org.fornever.koala.type.Row;
@@ -34,11 +34,12 @@ public class ODataRemoteDSTest {
 	}
 
 	@Test
-	public void testCreate() throws Throwable {
+	public void testCreateRetriveAndDelete() throws Throwable {
 		Assume.assumeNotNull(this.ds);
 		Row created = this.ds.create(this.testRow);
 		assert created != null;
 		String objectId = created.get("ObjectID").toString();
+		assert this.ds.retrieve("00163E20C98D1ED8B0C3F594FF12C050") != null;
 		assert objectId != null;
 		assert this.ds.delete(objectId);
 	}
@@ -50,13 +51,7 @@ public class ODataRemoteDSTest {
 	}
 
 	@Test
-	public void testRetrieve() throws Throwable {
-		Assume.assumeNotNull(this.ds);
-		assert this.ds.retrieve("00163E20C98D1ED8B0C3F594FF12C050") != null;
-	}
-
-	@Test
-	public void testUpdate() throws Throwable {
+	public void testUpdateAndDelete() throws Throwable {
 		Assume.assumeNotNull(this.ds);
 		Row created = this.ds.create(this.testRow);
 		assert created != null;

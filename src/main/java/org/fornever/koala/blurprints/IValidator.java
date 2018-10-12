@@ -6,6 +6,9 @@ import org.fornever.koala.type.ValidationErrors;
 
 /**
  * Validator
+ * <p>
+ * 
+ * validator is used to validate data in local data source
  * 
  * @author theosun
  *
