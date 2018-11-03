@@ -6,7 +6,7 @@ Java middleware for handling high loads in a short time
 
 ## Overview
 
-![Arch](http://on-img.com/chart_image/5b38cd62e4b045a5a30e4f48.png)
+![Arch](https://assets.processon.com/chart_image/5b38cd62e4b045a5a30e4f48.png)
 
 ## Concepts
 
